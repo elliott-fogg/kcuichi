@@ -51,11 +51,9 @@
 			}).addTo(map);
 
 			// zoom the map to the polyline
-			map.fitBounds(map_path.getBounds());
+			map.fitBounds(map_path.getBounds()).zoomOut();
 
 			markers[0].openPopup();
-
-			map.fitBounds(map_path.getBounds());
 
 		</script>
 
