@@ -11,60 +11,70 @@
  	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     	integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
     	crossorigin=""></script>
+
 </head>
 <body>
 	<div class="container">
-		<h1>Camilo Tracker</h1>
-		<p>Track Camilo's progress as he walks El Camino, and leave him encouraging messages.<br>(Or insult him, I'm not your boss.)</p>
-		<div style="width:500px; height:50px; bg-color: 'black'"></div>
+		<section class="text-center">
+			<h1>Camilo Tracker</h1>
+			<p>Track Camilo's progress as he walks El Camino, and leave him encouraging messages.</p>
+		</section>
 
-		<div id="map" style="height: 60vh"></div>
+		<section style="padding: 20px 0px 20px 0px;">
+			<div id="map" style="height: 60vh;"></div>
+		</section>
 
-		<script>
-			var map_coords = [
-				[43.168166096616936, -1.2378233417282554],
-				[43.00972246687362, -1.319199474091677],
-				[42.930146715179596, -1.503251248171866],
-				[42.81324219347755, -1.6474472183507254],
-				[42.675226891487966, -1.8138619397711204],
-				[42.672405824886866, -2.0319681633879374],
-				[42.567300382940445, -2.190496028160167],
-				[42.46282426397609, -2.4446721162167444]
-			]
-
-			var map = L.map('map');
-
-			var map_path = L.polyline(map_coords).addTo(map);
-
-			var markers = [];
-			for (let i = 0; i < map_coords.length; i++) {
-				var c = map_coords[i];
-				console.log(c);
-				var m = L.marker(c).addTo(map);
-				m.bindPopup(`${c[0]}, ${c[1]}<br>Time: ToBeAdded`)
-				markers.push(m)
-			}
-
-			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
- 				maxZoom: 19,
- 				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-			}).addTo(map);
-
-			// zoom the map to the polyline
-			map.fitBounds(map_path.getBounds()).zoomOut();
-
-			markers[0].openPopup();
-
-		</script>
-
-		<label for="msg_name">Name:</label><br>
-		<input type="text" id="msg_name" name="msg_name"><br>
-		<label for="msg_content">Message:</label><br>
-		<input type="text" id="msg_content" name="msg_content" style="width: 100%; height:20%">
+		<h2>Send a Message</h2>
+		<div>
+			<h4>Name:<small> (Max 20 chars)</small></h4>
+			<input type="text" maxlength=20>
+		</div>
+		<div style="padding-top: 10px; padding-bottom: 10px;">
+			<h4>Message:<small> (Max 140 chars)</small></h4>
+			<input type="text" style="width: 100%; height:20%" maxlength=140>
+		</div>
 		<button>Send Message</button>
 
 		<div style="height:20vh"></div>
 
 	</div>
 </body>
+
+	<script>
+		var map_coords = [
+			[43.168166096616936, -1.2378233417282554],
+			[43.00972246687362, -1.319199474091677],
+			[42.930146715179596, -1.503251248171866],
+			[42.81324219347755, -1.6474472183507254],
+			[42.675226891487966, -1.8138619397711204],
+			[42.672405824886866, -2.0319681633879374],
+			[42.567300382940445, -2.190496028160167],
+			[42.46282426397609, -2.4446721162167444]
+		]
+
+		var map = L.map('map');
+
+		var map_path = L.polyline(map_coords).addTo(map);
+
+		var markers = [];
+		for (let i = 0; i < map_coords.length; i++) {
+			var c = map_coords[i];
+			console.log(c);
+			var m = L.marker(c).addTo(map);
+			m.bindPopup(`${c[0]}, ${c[1]}<br>Time: ToBeAdded`)
+			markers.push(m)
+		}
+
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 15,
+				minZoom: 2,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		}).addTo(map);
+
+		// Zoom to last marker and open popUp
+		map.setView(map_coords.slice(-1)[0], 8);
+		markers[markers.length-1].openPopup();
+
+	</script>
+
 </html>
