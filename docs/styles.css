@@ -1,0 +1,17 @@
+section {
+	padding: 10px 0px 10px 0px;
+}
+
+#map {
+	height: 60vh;
+}
+
+#commentsContainer {
+	width: 100%;
+	max-height: 60vh;
+	border: solid black 1px;
+}
+
+#bottomPaddingDiv {
+	height: 20vh;
+}
