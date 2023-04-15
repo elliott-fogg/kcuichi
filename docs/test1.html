@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Camilo Tracker</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	
+	<!-- Leaflet Css -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    	integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+    	crossorigin=""/>
+
+    <!-- Leaflet JavaScript -->
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+ 	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    	integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+    	crossorigin=""></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+	<img id="image-for-background" src="file:images/base_1.jpg" alt="">
+
+	<div class="container">
+		<!-- Title and Descriptive Text -->
+		<section class="text-center">
+			<h1>El Camilo</h1>
+			<p>Track Camilo's progress as he walks El Camino, and leave him encouraging messages.</p>
+		</section>
+
+		<!-- Slippy Map, made with Leaflet.js and OpenStreetMap -->
+		<section>
+			<div id="map"></div>
+		</section>
+
+		<!-- A Scrollable Comment Secion -->
+		<section>
+			<div id="commentsContainer">
+				<div id="commentsTitle"><h2>Comments</h2></div>
+				<div id="commentsScrollbox"></div>
+			</div>
+		</section>
+
+		<!-- Leave a comment -->
+		<h2>Send a Message</h2>
+		<div>
+			<h4>Name:<small> (Max 20 chars)</small></h4>
+			<input type="text" maxlength=20>
+		</div>
+		<div style="padding-top: 10px; padding-bottom: 10px;">
+			<h4>Message:<small> (Max 140 chars)</small></h4>
+			<textArea maxlength=1000></textArea>
+			<input type="text" style="width: 100%; height:20%" maxlength=140>
+		</div>
+		<button>Send Message</button>
+
+		<div id="bottomPaddingDiv"></div>
+
+	</div>
+</body>
+
+<script type="text/javascript" src="load_data.js"></script>
+<script type="text/javascript" src="load_comments.js"></script>
+
+</html>
