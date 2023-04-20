@@ -68,7 +68,7 @@ section {
 	padding: 2px 0 0 13px;
 	width: 100%;
 	overflow-wrap: break-word;
-	white-space: pre;
+	white-space: pre-wrap;
 }
 
 input#commentNameInput {
