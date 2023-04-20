@@ -39,9 +39,9 @@ function parseComments(commentsData) {
 	let parsedComments = [];
 	for (let i = 0; i < commentsData.length; i++) {
 		let commentInfo = {
-			"timestamp": commentsData[i]["timestamp"]["S"],
-			"name": commentsData[i]["name"]["S"],
-			"text": commentsData[i]["text"]["S"]
+			"timestamp": decodeURIComponent(commentsData[i]["timestamp"]["S"]),
+			"name": decodeURIComponent(commentsData[i]["name"]["S"]),
+			"text": decodeURIComponent(commentsData[i]["text"]["S"])
 		}
 	parsedComments.push(commentInfo);
 	}
@@ -87,14 +87,27 @@ async function create_new_comment() {
 	var input_text = document.getElementById("commentTextInput");
 	var commentBtn = document.getElementById("btnSendMessage");
 	
-	var cName = input_name.value;
-	var cText = input_text.value;
+	var cName = encodeURIComponent(input_name.value);
+	var cText = encodeURIComponent(input_text.value);
 	var cTimestamp = String(date.getTime());
 	var cID = cTimestamp + cName;
 
 	input_name.disabled = true;
 	input_text.disabled = true;
 	commentBtn.disabled = true;
+
+	let body = JSON.stringify({
+		"commentID": cID,
+		"timestamp": cTimestamp,
+		"name": cName,
+		"text": cText
+	});
+
+	console.group("Message Input");
+	console.log(cName);
+	console.log(cText);
+	console.log(body);
+	console.groupEnd();
 
 	fetch(comments_url,
 	    {
@@ -103,12 +116,7 @@ async function create_new_comment() {
 		      'Content-Type': 'application/json'
 		    },
 	    	method: "POST",
-	    	body: JSON.stringify({"commentID": cID,
-	    	                      "timestamp": cTimestamp,
-	    	                      "name": cName,
-	    	                      "text": cText,
-	    	                      "timestamp": cTimestamp
-	    	                    })
+	    	body: body
     	}
 	);
 }
@@ -128,11 +136,13 @@ function refreshCommentSection() {
 	fetch_comment_data();
 }
 
+
 function clickCommentButton() {
 	create_new_comment();
 	setTimeout(refreshCommentSection, 1000);
 	// fetch_comment_data();
 }
+
 
 document.getElementById("btnSendMessage").onclick = clickCommentButton;
 
