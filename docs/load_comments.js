@@ -1,7 +1,4 @@
-// Get the comments container object
-// Load comment data
-// For each comment, create a div with the Name, timestamp, and message
-// Load only the last 50 comments?
+// TODO: Add in a way to just query the latest comments, instead of loading them all every single time
 
 var comments_url = "https://9hz4ejld0d.execute-api.eu-west-2.amazonaws.com/DEV/dbitems";
 
@@ -83,35 +80,21 @@ async function fetch_comment_data(lastUpload=null) {
 }
 
 
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well! I'm going to try and write you a reaaaaaaaaaaaaaally long message here, just to see what happens when I force the text box to overflow because there's way more than the 140 character limit that I'm eventually going to impose.");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "Hi, hope you're well!");
-create_comment("Elliott", "15/05/2023 10:23am", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-
 async function create_new_comment() {
 	var date = new Date();
-	var cName = document.getElementById("commentNameInput").value;
-	var cText = document.getElementById("commentTextInput").value;
+	
+	var input_name = document.getElementById("commentNameInput");
+	var input_text = document.getElementById("commentTextInput");
+	var commentBtn = document.getElementById("btnSendMessage");
+	
+	var cName = input_name.value;
+	var cText = input_text.value;
 	var cTimestamp = String(date.getTime());
 	var cID = cTimestamp + cName;
 
-	console.log(cID, cName, cText, cTimestamp)
+	input_name.disabled = true;
+	input_text.disabled = true;
+	commentBtn.disabled = true;
 
 	fetch(comments_url,
 	    {
@@ -128,16 +111,27 @@ async function create_new_comment() {
 	    	                    })
     	}
 	);
-
-	// Refresh comments?
 }
 
 
+function refreshCommentSection() {
+	var input_name = document.getElementById("commentNameInput");
+	var input_text = document.getElementById("commentTextInput");
+	var commentBtn = document.getElementById("btnSendMessage");
 
+	input_name.value = "";
+	input_text.value = "";
+	input_name.disabled = false;
+	input_text.disabled = false;
+	commentBtn.disabled = false;
+
+	fetch_comment_data();
+}
 
 function clickCommentButton() {
 	create_new_comment();
-	fetch_comment_data();
+	setTimeout(refreshCommentSection, 1000);
+	// fetch_comment_data();
 }
 
 document.getElementById("btnSendMessage").onclick = clickCommentButton;
@@ -150,3 +144,5 @@ document.getElementById("btnSendMessage").onclick = clickCommentButton;
 		// 	console.log(responseJSON);
 		// 	localStorage["kcuichi_commentsData"] = JSON.stringify(responseJSON["Items"]);
 		// });
+
+fetch_comment_data();
