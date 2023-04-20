@@ -33,10 +33,14 @@ section {
 	max-height: 60vh;
 }
 
-#commentsTitle > h2 {
+#commentsTitle {
 	margin: 0;
 	padding: 5px;
 	border-bottom: solid black 1px;
+}
+
+#commentsTitle > span {
+	font-size: 20px;
 }
 
 .comment {
@@ -64,4 +68,14 @@ section {
 	padding: 2px 0 0 13px;
 	width: 100%;
 	overflow-wrap: break-word;
+}
+
+input#commentNameInput {
+	width: 50%;
+}
+
+textArea#commentTextInput {
+	width: 100%;
+	height: 200px;
+	resize: None;
 }

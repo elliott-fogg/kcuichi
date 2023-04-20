@@ -1,4 +1,5 @@
-var url = "https://kvj0h3cxn3.execute-api.eu-west-2.amazonaws.com/DEV/getdatabaseitems";
+var journey_url = "https://kvj0h3cxn3.execute-api.eu-west-2.amazonaws.com/DEV/getdatabaseitems";
+
 
 var map = L.map('map');
 
@@ -139,14 +140,16 @@ async function fetch_journey_data() {
 
 	lastDownload = parseFloat(localStorage["kcuichi_lastDownload_journey"]);
 
-	if (isNaN(lastDownload) || (lastDownload + 12600000 < date.getTime())) {
+	if (isNaN(lastDownload) || (lastDownload + 0 < date.getTime())) { // 1260000
 		console.log("Downloading data...");
-		await fetch(url)
+		
+		await fetch(journey_url)
 		.then(response => response.json())
 		.then(responseJSON => {
 			localStorage["kcuichi_journeyData"] = JSON.stringify(responseJSON["Items"]);
 			localStorage["kcuichi_lastDownload_journey"] = JSON.stringify(date.getTime());
 		});
+
 	} else {
 		console.log("Using previously downloaded data...");
 	}
@@ -154,6 +157,7 @@ async function fetch_journey_data() {
 	var parsedData = parse_data(JSON.parse(localStorage["kcuichi_journeyData"]));
 	mark_journey_on_map(parsedData);
 }
+
 
 load_trail_path();
 fetch_journey_data();
