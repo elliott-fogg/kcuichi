@@ -14,13 +14,16 @@ function create_comment(commentName, commentTimestamp, commentText) {
 	var outer_div = document.createElement("div");
 	outer_div.classList.add("comment");
 	
+	let date = new Date(parseInt(commentTimestamp));
+	let timeText = date.toLocaleString("en-US") + " (UK)";
+
 	var name_div = document.createElement("div");
 	var name_span = document.createElement("span");
 	name_span.classList.add("commentName");
 	name_span.textContent = commentName;
 	var timestamp_span = document.createElement("span");
 	timestamp_span.classList.add("commentTimestamp");
-	timestamp_span.textContent = commentTimestamp;
+	timestamp_span.textContent = timeText;
 	name_div.appendChild(name_span);
 	name_div.appendChild(timestamp_span);
 
