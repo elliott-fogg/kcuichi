@@ -46,10 +46,10 @@ section {
 .comment {
 	padding: 5px;
 }
-.comment:nth-child(odd) {
+.comment:nth-last-child(2n+0) {
 	background-color: rgb(245, 232, 252);
 }
-.comment:nth-child(even) {
+.comment:nth-last-child(2n+1) {
 	background-color: rgb(254, 255, 245);
 }
 
