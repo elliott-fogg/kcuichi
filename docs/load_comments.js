@@ -59,6 +59,8 @@ function parseComments(commentsData) {
 		currComment = parsedComments[i];
 		create_comment(currComment.name, currComment.timestamp, currComment.text);
 	}
+
+	document.getElementById("commentsScrollbox").scrollTop = 0;
 }
 
 
