@@ -20,17 +20,6 @@ var lastIcon = new L.Icon({
 })
 
 
-function compare( a, b ) {
-  if ( a.timestamp < b.timestamp ){
-    return -1;
-  }
-  if ( a.timestamp > b.timestamp ){
-    return 1;
-  }
-  return 0;
-}
-
-
 function load_trail_path() {
 	var trail_coords = [
 		[43.168166096616936, -1.2378233417282554], //Saint Jean Pied de Port
@@ -82,12 +71,6 @@ function load_trail_path() {
 function parse_data(data) {
 	parsedData = []
 
-	console.log(data);
-
-	data.sort((a,b) => a.timestamp - b.timestamp);
-
-	console.log(data);
-
 	for (let i = 0; i < data.length; i++) {
 		var entry = data[i]
 		var longitude = parseFloat(entry["longitude"]["S"]);
@@ -100,7 +83,8 @@ function parse_data(data) {
 
 		parsedData.push({
 			"coords": [latitude, longitude],
-			"popup_message": `${locality}<br>${datestring} ${timestring}<br>${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+			"popup_message": `${locality}<br>${datestring} ${timestring}<br>${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+			"timestamp": timestamp
 		})
 	}
 
@@ -112,6 +96,8 @@ function parse_data(data) {
 
 function mark_journey_on_map(data) {
 	console.log(data);
+
+	data.sort((pointA, pointB) => {return pointA.timestamp - pointB.timestamp})
 
 	var coords_list = [];
 
