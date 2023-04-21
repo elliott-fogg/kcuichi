@@ -26,6 +26,7 @@
 		<section class="text-center">
 			<h1>El Camilo</h1>
 			<p>Track Camilo's progress as he walks El Camino de Santiago de Compostela, and leave him encouraging messages.</p>
+			<p>You can see all his photos (or lack thereof) on his <a href="https://www.instagram.com/_kcuichi_/">Instagram</a>.</p>
 		</section>
 
 		<!-- Slippy Map, made with Leaflet.js and OpenStreetMap -->
@@ -39,10 +40,13 @@
 				<div id="commentsTitle">
 					<span>Comments</span> 
 					<button id="commentsRefreshBtn">&#x21bb;</button>
+					<div id="commentsRefreshSpinner"></div>
 				</div>
 				<div id="commentsScrollbox"></div>
 			</div>
 		</section>
+
+		<div id="commentErrorText"></div>
 
 		<!-- Leave a comment -->
 		<h2>Send a Message</h2>
@@ -54,7 +58,8 @@
 			<h4>Message:</h4>
 			<textArea maxlength=1000 id="commentTextInput"></textArea>
 		</div>
-		<button id="btnSendMessage">Send Message</button>
+		<button id="btnSendComment">Send Message</button>
+		<label id="commentSendingMessage">Sending...</label>
 
 		<div id="bottomPaddingDiv"></div>
 
