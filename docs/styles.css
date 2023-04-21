@@ -105,7 +105,7 @@ textArea#commentTextInput {
 	display: none;
 }
 #commentSendingMessage.active {
-	display: block;
+	display: inline;
 }
 
 #commentsTitle.refreshing > #commentsRefreshBtn {
