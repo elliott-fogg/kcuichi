@@ -80,3 +80,18 @@ textArea#commentTextInput {
 	height: 200px;
 	resize: None;
 }
+
+
+.comment{
+	position:relative;
+	animation:animatetop 0.4s}
+@keyframes animatetop{
+	from{
+		top: -300px;
+		opacity: 0
+	}
+	to{
+		top: 0;
+		opacity: 1
+	}
+}
