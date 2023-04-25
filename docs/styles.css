@@ -5,8 +5,13 @@
 	top: 0;
 	width: 100%;
 	height: auto;
-	position: absolute;
 	z-index: -1;
+	background-image: url("./images/base_1.jpg");
+}
+
+#image-for-background.heightfill {
+	height: 100%;
+	width: auto;
 }
 
 section {
