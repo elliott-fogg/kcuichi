@@ -64,6 +64,10 @@ function load_trail_path() {
 	     "opacity": 0.3}
 	).addTo(map);
 
+	for (let i = 0; i < trail_coords.length; i++) {
+		L.circle(trail_coords[i], {radius: 20, color: "black"}).addTo(map);
+	}
+
 	map.fitBounds(trail_path.getBounds());
 }
 
