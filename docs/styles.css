@@ -1,12 +1,15 @@
-#image-for-background {
-	opacity: 0.15;
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: auto;
-	position: absolute;
-	z-index: -1;
+body::before {    
+      content: "";
+      background-image: url("./images/sindar_background.png");
+      background-size: cover;
+      background-position: center;
+      position: fixed;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      opacity: 0.15;
+      z-index: -1;
 }
 
 section {
@@ -16,6 +19,7 @@ section {
 #map {
 	height: 60vh;
 	border: solid black 1px;
+	margin-bottom: 40px;
 }
 
 #bottomPaddingDiv {
@@ -25,7 +29,6 @@ section {
 #commentsContainer {
 	width: 100%;
 	border: solid black 1px;
-	background-color: white;
 }
 
 #commentsScrollbox {
@@ -37,6 +40,7 @@ section {
 	margin: 0;
 	padding: 5px;
 	border-bottom: solid black 1px;
+	background-color: white;
 }
 
 #commentsTitle > span {
@@ -131,4 +135,28 @@ textArea#commentTextInput {
 
 #commentsTitle:not(.refreshing) > #commentsRefreshSpinner {
 	display: none;
+}
+
+.normal_text {
+	font-size: 16px;
+	margin-bottom: 0;
+	display: inline;
+}
+
+.mini_text {
+	font-size: 8px;
+	margin-bottom: 0;
+}
+
+#insta_icon {
+	height: 24px;
+	width: 24px;
+	display: inline-block;
+	margin: auto;
+	position: relative;
+	top: -1px;
+}
+
+#insta_icon:hover {
+	filter: brightness(1.3) drop-shadow(0 0 3px hotpink);
 }
