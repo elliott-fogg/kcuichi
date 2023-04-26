@@ -23,19 +23,22 @@
 <body>
 	<div class="container">
 
-		<img id="image-for-background" src="images/base_1.jpg" alt="">
-
 		<!-- Title and Descriptive Text -->
 		<section class="text-center">
-			<h1>El Camilo</h1>
-			<p>Track Camilo's progress as he walks El Camino de Santiago de Compostela, and leave him encouraging messages.</p>
-			<p>You can see all his photos (or lack thereof) on his <a href="https://www.instagram.com/_kcuichi_/">Instagram</a>.</p>
+			<h1 id="page_title">El Camilo</h1>
+			<p class="normal_text">Track Camilo's progress as he walks El Camino de Santiago de Compostela, and leave him encouraging messages.</p>
+			<p class="mini_text">Or tell him he sucks, it's really up to you.</p>
+			<p class="normal_text">
+				Check out his photos on
+				<a href="https://www.instagram.com/_kcuichi_/" id="insta_link">Instagram</a>
+				<a href="https://www.instagram.com/_kcuichi_/">
+					<img src="./images/instagram_color_512px.png" id="insta_icon">
+				</a>
+			</p>
 		</section>
 
 		<!-- Slippy Map, made with Leaflet.js and OpenStreetMap -->
-		<section>
-			<div id="map"></div>
-		</section>
+		<div id="map"></div>
 
 		<!-- A Scrollable Comment Secion -->
 		<section>
