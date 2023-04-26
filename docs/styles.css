@@ -1,6 +1,6 @@
 body::before {    
       content: "";
-      background-image: url("./images/sindar_background.png");
+      background-image: url("./images/sindar_background_compressed.png");
       background-size: cover;
       background-position: center;
       position: fixed;
