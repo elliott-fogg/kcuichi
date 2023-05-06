@@ -1,5 +1,93 @@
-<h1>Camilo Tracker Test Pages</h1>
-<ul>
-	<li><a href="test1.html">Background Image</a></li>
-	<li><a href="test2.html">Image of the day</a></li>
-</ul>
+<!doctype html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Camilo Tracker</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+	<!-- Leaflet Css -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    	integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+    	crossorigin=""/>
+
+    <!-- Leaflet JavaScript -->
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+ 	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    	integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+    	crossorigin=""></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+	<div class="container">
+
+		<!-- Title and Descriptive Text -->
+		<section class="text-center">
+			<h1 id="page_title">El Camilo</h1>
+			<p class="normal_text">Track Camilo's progress as he walks El Camino de Santiago de Compostela, and leave him encouraging messages.</p>
+			<p class="mini_text">Or tell him he sucks, it's really up to you.</p>
+			<p class="normal_text">
+				Check out his photos on
+				<a href="https://www.instagram.com/_kcuichi_/" id="insta_link">Instagram</a>
+				<a href="https://www.instagram.com/_kcuichi_/">
+					<img src="./images/instagram_color_512px.png" id="insta_icon">
+				</a>
+			</p>
+		</section>
+
+		<!-- Slippy Map, made with Leaflet.js and OpenStreetMap -->
+		<div id="map-container">
+			<div id="map"></div>
+		</div>
+		<div id="animationControls">
+			<button id="mapAnimateBtn" disabled>Animate</button>
+			<div>
+				<label>Real Time?</label>
+				<input type="checkbox" id="realTime">
+			</div>
+			<div>
+				<label>Speed:</label>
+				<input type="range" id="animateSpeed" min="0" max="3" value="2">
+				<p>1 Day = <span id="animateSpeedDisplay">?</span>s</p>
+			</div>
+		</div>
+
+
+		<!-- A Scrollable Comment Secion -->
+		<section>
+			<div id="commentsContainer">
+				<div id="commentsTitle">
+					<span>Comments</span> 
+					<button id="commentsRefreshBtn">&#x21bb;</button>
+					<div id="commentsRefreshSpinner"></div>
+				</div>
+				<div id="commentsScrollbox"></div>
+			</div>
+		</section>
+
+		<div id="commentErrorText"></div>
+
+		<!-- Leave a comment -->
+		<h2>Send a Message</h2>
+		<div>
+			<h4>Name:</h4>
+			<input type="text" maxlength=100 id="commentNameInput">
+		</div>
+		<div style="padding-top: 10px; padding-bottom: 10px;">
+			<h4>Message:</h4>
+			<textArea maxlength=1000 id="commentTextInput"></textArea>
+		</div>
+		<button id="btnSendComment">Send Message</button>
+		<p id="commentSendingMessage">Sending...</p>
+
+		<div id="bottomPaddingDiv"></div>
+
+	</div>
+</body>
+
+<script type="text/javascript" src="load_data.js"></script>
+<script type="text/javascript" src="load_comments.js"></script>
+
+</html>
