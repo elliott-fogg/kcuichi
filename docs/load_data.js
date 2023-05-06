@@ -214,8 +214,4 @@ document.getElementById("mapAnimateBtn").onclick = mapAnimateStart;
 load_trail_path();
 fetch_journey_data();
 
-// const theButton = document.querySelector(".button");
-
-// theButton.addEventListener("click", () => {
-//     theButton.classList.add("button--loading");
-// });
+// Placeholder
