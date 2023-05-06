@@ -1,14 +1,22 @@
 var journey_url = "https://kvj0h3cxn3.execute-api.eu-west-2.amazonaws.com/DEV/getdatabaseitems";
 
-
+// Create map and layers
 var map = L.map('map');
+var trailLayer = L.layerGroup().addTo(map);
+var camiloLayer = L.layerGroup().addTo(map);
+var layerControl = L.control.layers(null).addTo(map);
 
+
+// Add tile layer
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 15,
 		minZoom: 2,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
+
+// Set up Icons
+var defaultIcon = new L.Icon.Default();
 
 var lastIcon = new L.Icon({
 	iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
@@ -62,13 +70,40 @@ function load_trail_path() {
 	    trail_coords,
 	    {"color": "black",
 	     "opacity": 0.3}
-	).addTo(map);
+	).addTo(trailLayer);
 
 	for (let i = 0; i < trail_coords.length; i++) {
-		L.circle(trail_coords[i], {radius: 20, color: "black"}).addTo(map);
+		L.circle(trail_coords[i], {radius: 20, color: "black"}).addTo(trailLayer);
 	}
 
 	map.fitBounds(trail_path.getBounds());
+
+	layerControl.addOverlay(trailLayer, "Route");
+}
+
+
+async function fetch_journey_data() {
+	var date = new Date();
+
+	lastDownload = parseFloat(localStorage["kcuichi_lastDownload_journey"]);
+
+	if (isNaN(lastDownload) || (lastDownload + 12600000 < date.getTime())) { // 1260000
+		console.log("Downloading data...");
+		
+		await fetch(journey_url)
+		.then(response => response.json())
+		.then(responseJSON => {
+			localStorage["kcuichi_journeyData"] = JSON.stringify(responseJSON["Items"]);
+			localStorage["kcuichi_lastDownload_journey"] = JSON.stringify(date.getTime());
+		});
+
+	} else {
+		console.log("Using previously downloaded data...");
+	}
+
+	var parsedData = parse_data(JSON.parse(localStorage["kcuichi_journeyData"]));
+	mark_journey_on_map(parsedData);
+	document.getElementById("mapAnimateBtn").disabled = false;
 }
 
 
@@ -92,62 +127,95 @@ function parse_data(data) {
 		})
 	}
 
-	console.log(parsedData);
-
 	return parsedData;
 }
 
 
 function mark_journey_on_map(data) {
-	console.log(data);
-
 	data.sort((pointA, pointB) => {return pointA.timestamp - pointB.timestamp})
 
 	var coords_list = [];
 
-	for (let i = 0; i < data.length-1; i++) {
+	for (let i = 0; i < data.length; i++) {
+
 		var entry = data[i];
-		var m = L.marker(entry["coords"]).addTo(map);
+		var m = L.marker(entry["coords"],
+		             {icon: ((i < data.length-1) ? defaultIcon : lastIcon)}
+		    ).addTo(camiloLayer);
 		m.bindPopup(entry["popup_message"]);
 		coords_list.push(entry["coords"]);
 	}
 
-	last = data[data.length-1];
-	console.log(last);
-	last_m = L.marker(last["coords"], {icon: lastIcon}).addTo(map);
-	last_m.bindPopup(last["popup_message"]);
-	coords_list.push(last["coords"]);
+	var journey_path = L.polyline(coords_list).addTo(camiloLayer);
 
-	var journey_path = L.polyline(coords_list).addTo(map);
+	map.setView(entry.coords, 8);
+	m.openPopup();
 
-	map.setView(last["coords"], 8);
-	last_m.openPopup();
+	layerControl.addOverlay(camiloLayer, "Camilo");
 }
 
 
-async function fetch_journey_data() {
-	var date = new Date();
+function animate_journey_on_map(data) {
+	camiloLayer.clearLayers();
 
-	lastDownload = parseFloat(localStorage["kcuichi_lastDownload_journey"]);
+	data.sort((pointA, pointB) => {return pointA.timestamp - pointB.timestamp})
 
-	if (isNaN(lastDownload) || (lastDownload + 0 < date.getTime())) { // 1260000
-		console.log("Downloading data...");
-		
-		await fetch(journey_url)
-		.then(response => response.json())
-		.then(responseJSON => {
-			localStorage["kcuichi_journeyData"] = JSON.stringify(responseJSON["Items"]);
-			localStorage["kcuichi_lastDownload_journey"] = JSON.stringify(date.getTime());
-		});
+	var previousCoords = null;
+	var timeoutDelay = 1000;
 
-	} else {
-		console.log("Using previously downloaded data...");
+	timeoutFunc = (entry, previousCoords, iconType) => {
+		let m = L.marker(entry["coords"],
+		                 {icon: iconType}
+		        ).addTo(camiloLayer);
+		m.bindPopup(entry["popup_message"]);
+
+		if (previousCoords != null) {
+			p = L.polyline([previousCoords, entry["coords"]]).addTo(camiloLayer);
+		}
+
+		m.openPopup();
+		map.setView(entry.coords, 8);
 	}
 
-	var parsedData = parse_data(JSON.parse(localStorage["kcuichi_journeyData"]));
-	mark_journey_on_map(parsedData);
+	for (var i = 0; i < data.length; i++) {
+		var entry = data[i];
+		let iconType = ((i<data.length-1) ? defaultIcon : lastIcon);
+
+		setTimeout(timeoutFunc, i*timeoutDelay, entry, previousCoords, iconType);
+
+		previousCoords = entry["coords"];
+	}
+
+	setTimeout(mapAnimateEnd, i*timeoutDelay);
 }
+
+
+async function mapAnimateStart() {
+	// Disable map and buttons
+	document.getElementById("map-container").classList.add("is-locked");
+	document.getElementById("mapAnimateBtn").disabled = true;
+	document.getElementById("mapAnimateBtn").textContent = "Animating...";
+
+	var parsedData = parse_data(JSON.parse(localStorage["kcuichi_journeyData"]));
+	animate_journey_on_map(parsedData);
+}
+
+
+function mapAnimateEnd() {
+	document.getElementById("map-container").classList.remove("is-locked");
+	document.getElementById("mapAnimateBtn").disabled = false;
+	document.getElementById("mapAnimateBtn").textContent = "Animate";
+}
+
+
+document.getElementById("mapAnimateBtn").onclick = mapAnimateStart;
 
 
 load_trail_path();
 fetch_journey_data();
+
+// const theButton = document.querySelector(".button");
+
+// theButton.addEventListener("click", () => {
+//     theButton.classList.add("button--loading");
+// });

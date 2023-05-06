@@ -1,3 +1,4 @@
+/* Backgorund Image */
 body::before {    
       content: "";
       background-image: url("./images/sindar_background_compressed.png");
@@ -12,20 +13,72 @@ body::before {
       z-index: -1;
 }
 
+
+/* General Section Padding */
 section {
 	padding: 10px 0px 10px 0px;
 }
 
+
+/* Formatting for text at top of page */
+.normal_text {
+	font-size: 16px;
+	margin-bottom: 0;
+	display: inline;
+}
+
+.mini_text {
+	font-size: 8px;
+	margin-bottom: 0;
+}
+
+#insta_icon {
+	height: 24px;
+	width: 24px;
+	display: inline-block;
+	margin: auto;
+	position: relative;
+	top: -1px;
+}
+
+#insta_icon:hover {
+	filter: brightness(1.3) drop-shadow(0 0 3px hotpink);
+}
+
+
+/* Set height for the map and animate buttons*/
 #map {
 	height: 60vh;
 	border: solid black 1px;
-	margin-bottom: 40px;
 }
 
+#mapAnimateBtn {
+    position: relative;
+    width: 160px;
+    height: 40px;
+    background: #9433cc;
+    border: none;
+    outline: none;
+    border-radius: 2px;
+    cursor: pointer;
+    color: white;
+    margin-top: 2px;
+    margin-bottom: 40px;
+}
+
+#mapAnimateBtn:disabled {
+    background: #cc8af2;
+    color: #e7e6e8;
+}
+
+
+/* Set height of buffer div at bottom of page */
 #bottomPaddingDiv {
 	height: 20vh;
 }
 
+
+/* Comments Scroll box and others */
 #commentsContainer {
 	width: 100%;
 	border: solid black 1px;
@@ -58,6 +111,7 @@ section {
 }
 
 
+/* Individual Comment Formatting */
 .commentName {
 	font-weight: bold;
 	font-size: 16px;
@@ -75,6 +129,8 @@ section {
 	white-space: pre-wrap;
 }
 
+
+/* Comment Input Areas Formatting */
 input#commentNameInput {
 	width: 50%;
 }
@@ -86,6 +142,7 @@ textArea#commentTextInput {
 }
 
 
+/* Comment animations */
 .comment.newComment{
 	position:relative;
 	animation:animatetop 0.4s}
@@ -99,7 +156,6 @@ textArea#commentTextInput {
 		opacity: 1
 	}
 }
-
 
 .paused {
 	filter: grayscale(1);
@@ -137,26 +193,27 @@ textArea#commentTextInput {
 	display: none;
 }
 
-.normal_text {
-	font-size: 16px;
-	margin-bottom: 0;
-	display: inline;
+
+/* Disabling the map for animation */
+#map-container {
+  position: relative;
 }
 
-.mini_text {
-	font-size: 8px;
-	margin-bottom: 0;
+#map-container #map {
+  position: relative;
+  z-index: 1;
 }
 
-#insta_icon {
-	height: 24px;
-	width: 24px;
-	display: inline-block;
-	margin: auto;
-	position: relative;
-	top: -1px;
+#map-container.is-locked::after {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  content: "";
+  display: block;
 }
 
-#insta_icon:hover {
-	filter: brightness(1.3) drop-shadow(0 0 3px hotpink);
-}
+
