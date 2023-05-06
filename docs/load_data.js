@@ -87,7 +87,7 @@ async function fetch_journey_data() {
 
 	lastDownload = parseFloat(localStorage["kcuichi_lastDownload_journey"]);
 
-	if (isNaN(lastDownload) || (lastDownload + 0 < date.getTime())) { // 1260000
+	if (isNaN(lastDownload) || (lastDownload + 3600000 < date.getTime())) {
 		console.log("Downloading data...");
 		
 		await fetch(journey_url)
