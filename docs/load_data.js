@@ -6,6 +6,13 @@ var trailLayer = L.layerGroup().addTo(map);
 var camiloLayer = L.layerGroup().addTo(map);
 var layerControl = L.control.layers(null).addTo(map);
 
+var speedIndexMap = {
+	"0": 5,
+	"1": 2,
+	"2": 1,
+	"3": 0.5
+}
+
 
 // Add tile layer
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -87,6 +94,7 @@ async function fetch_journey_data() {
 
 	lastDownload = parseFloat(localStorage["kcuichi_lastDownload_journey"]);
 
+	// Only download the journey coordinates once every hour, just in case.
 	if (isNaN(lastDownload) || (lastDownload + 3600000 < date.getTime())) {
 		console.log("Downloading data...");
 		
@@ -95,10 +103,12 @@ async function fetch_journey_data() {
 		.then(responseJSON => {
 			localStorage["kcuichi_journeyData"] = JSON.stringify(responseJSON["Items"]);
 			localStorage["kcuichi_lastDownload_journey"] = JSON.stringify(date.getTime());
+			console.log("Current data downloaded.")
 		});
 
 	} else {
-		console.log("Using previously downloaded data...");
+		console.log("Less than an hour since last downloaded coords.")
+		console.log("Using previously downloaded data.");
 	}
 
 	var parsedData = parse_data(JSON.parse(localStorage["kcuichi_journeyData"]));
@@ -161,7 +171,8 @@ function animate_journey_on_map(data) {
 	data.sort((pointA, pointB) => {return pointA.timestamp - pointB.timestamp})
 
 	var previousCoords = null;
-	var timeoutDelay = 1000;
+	var timeoutDelay = 1000*getSpeed();
+	var startTime = data[0]["timestamp"];
 
 	timeoutFunc = (entry, previousCoords, iconType) => {
 		let m = L.marker(entry["coords"],
@@ -177,16 +188,30 @@ function animate_journey_on_map(data) {
 		map.setView(entry.coords, 8);
 	}
 
+	var realTime = document.getElementById("realTime").checked;
+	console.log(realTime);
+
 	for (var i = 0; i < data.length; i++) {
 		var entry = data[i];
 		let iconType = ((i<data.length-1) ? defaultIcon : lastIcon);
 
-		setTimeout(timeoutFunc, i*timeoutDelay, entry, previousCoords, iconType);
+		var timeout;
+		if (realTime) {
+			timeout = (entry["timestamp"] - startTime) / 86400000 * timeoutDelay;
+		} else {
+			timeout = i*timeoutDelay;
+		}
+
+		console.log(timeout)
+
+		setTimeout(timeoutFunc, timeout, entry, previousCoords, iconType);
 
 		previousCoords = entry["coords"];
 	}
 
-	setTimeout(mapAnimateEnd, i*timeoutDelay);
+	console.log(timeout);
+
+	setTimeout(mapAnimateEnd, timeout+1000);
 }
 
 
@@ -208,14 +233,22 @@ function mapAnimateEnd() {
 }
 
 
+function updateAnimateSpeedText() {
+	let speed = getSpeed();
+	document.getElementById("animateSpeedDisplay").textContent = speed;
+}
+
+function getSpeed() {
+	let speedIndex = document.getElementById("animateSpeed").value;
+	let speed = speedIndexMap[speedIndex];
+	return speed;
+}
+
+
 document.getElementById("mapAnimateBtn").onclick = mapAnimateStart;
+document.getElementById("animateSpeed").oninput = updateAnimateSpeedText;
+updateAnimateSpeedText();
 
 
 load_trail_path();
 fetch_journey_data();
-
-// const theButton = document.querySelector(".button");
-
-// theButton.addEventListener("click", () => {
-//     theButton.classList.add("button--loading");
-// });
