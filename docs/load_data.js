@@ -1,14 +1,22 @@
 var journey_url = "https://kvj0h3cxn3.execute-api.eu-west-2.amazonaws.com/DEV/getdatabaseitems";
 
-
+// Create map and layers
 var map = L.map('map');
+var trailLayer = L.layerGroup().addTo(map);
+var camiloLayer = L.layerGroup().addTo(map);
+var layerControl = L.control.layers(null).addTo(map);
 
+
+// Add tile layer
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 15,
 		minZoom: 2,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
+
+// Set up Icons
+var defaultIcon = new L.Icon.Default();
 
 var lastIcon = new L.Icon({
 	iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
@@ -62,66 +70,15 @@ function load_trail_path() {
 	    trail_coords,
 	    {"color": "black",
 	     "opacity": 0.3}
-	).addTo(map);
+	).addTo(trailLayer);
 
 	for (let i = 0; i < trail_coords.length; i++) {
-		L.circle(trail_coords[i], {radius: 20, color: "black"}).addTo(map);
+		L.circle(trail_coords[i], {radius: 20, color: "black"}).addTo(trailLayer);
 	}
 
 	map.fitBounds(trail_path.getBounds());
-}
 
-
-function parse_data(data) {
-	parsedData = []
-
-	for (let i = 0; i < data.length; i++) {
-		var entry = data[i]
-		var longitude = parseFloat(entry["longitude"]["S"]);
-		var latitude = parseFloat(entry["latitude"]["S"]);
-		var timestamp = parseFloat(entry["timestamp"]["S"]);
-		var date = new Date(timestamp);
-		var datestring = date.toLocaleDateString("en-GB");
-		var timestring = date.toLocaleTimeString("en-GB");
-		var locality = entry["locality"]["S"];
-
-		parsedData.push({
-			"coords": [latitude, longitude],
-			"popup_message": `${locality}<br>${datestring} ${timestring}<br>${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
-			"timestamp": timestamp
-		})
-	}
-
-	console.log(parsedData);
-
-	return parsedData;
-}
-
-
-function mark_journey_on_map(data) {
-	console.log(data);
-
-	data.sort((pointA, pointB) => {return pointA.timestamp - pointB.timestamp})
-
-	var coords_list = [];
-
-	for (let i = 0; i < data.length-1; i++) {
-		var entry = data[i];
-		var m = L.marker(entry["coords"]).addTo(map);
-		m.bindPopup(entry["popup_message"]);
-		coords_list.push(entry["coords"]);
-	}
-
-	last = data[data.length-1];
-	console.log(last);
-	last_m = L.marker(last["coords"], {icon: lastIcon}).addTo(map);
-	last_m.bindPopup(last["popup_message"]);
-	coords_list.push(last["coords"]);
-
-	var journey_path = L.polyline(coords_list).addTo(map);
-
-	map.setView(last["coords"], 8);
-	last_m.openPopup();
+	layerControl.addOverlay(trailLayer, "Route");
 }
 
 
@@ -146,8 +103,119 @@ async function fetch_journey_data() {
 
 	var parsedData = parse_data(JSON.parse(localStorage["kcuichi_journeyData"]));
 	mark_journey_on_map(parsedData);
+	document.getElementById("mapAnimateBtn").disabled = false;
 }
+
+
+function parse_data(data) {
+	parsedData = []
+
+	for (let i = 0; i < data.length; i++) {
+		var entry = data[i]
+		var longitude = parseFloat(entry["longitude"]["S"]);
+		var latitude = parseFloat(entry["latitude"]["S"]);
+		var timestamp = parseFloat(entry["timestamp"]["S"]);
+		var date = new Date(timestamp);
+		var datestring = date.toLocaleDateString("en-GB");
+		var timestring = date.toLocaleTimeString("en-GB");
+		var locality = entry["locality"]["S"];
+
+		parsedData.push({
+			"coords": [latitude, longitude],
+			"popup_message": `${locality}<br>${datestring} ${timestring}<br>${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+			"timestamp": timestamp
+		})
+	}
+
+	return parsedData;
+}
+
+
+function mark_journey_on_map(data) {
+	data.sort((pointA, pointB) => {return pointA.timestamp - pointB.timestamp})
+
+	var coords_list = [];
+
+	for (let i = 0; i < data.length; i++) {
+
+		var entry = data[i];
+		var m = L.marker(entry["coords"],
+		             {icon: ((i < data.length-1) ? defaultIcon : lastIcon)}
+		    ).addTo(camiloLayer);
+		m.bindPopup(entry["popup_message"]);
+		coords_list.push(entry["coords"]);
+	}
+
+	var journey_path = L.polyline(coords_list).addTo(camiloLayer);
+
+	map.setView(entry.coords, 8);
+	m.openPopup();
+
+	layerControl.addOverlay(camiloLayer, "Camilo");
+}
+
+
+function animate_journey_on_map(data) {
+	camiloLayer.clearLayers();
+
+	data.sort((pointA, pointB) => {return pointA.timestamp - pointB.timestamp})
+
+	var previousCoords = null;
+	var timeoutDelay = 1000;
+
+	timeoutFunc = (entry, previousCoords, iconType) => {
+		let m = L.marker(entry["coords"],
+		                 {icon: iconType}
+		        ).addTo(camiloLayer);
+		m.bindPopup(entry["popup_message"]);
+
+		if (previousCoords != null) {
+			p = L.polyline([previousCoords, entry["coords"]]).addTo(camiloLayer);
+		}
+
+		m.openPopup();
+		map.setView(entry.coords, 8);
+	}
+
+	for (var i = 0; i < data.length; i++) {
+		var entry = data[i];
+		let iconType = ((i<data.length-1) ? defaultIcon : lastIcon);
+
+		setTimeout(timeoutFunc, i*timeoutDelay, entry, previousCoords, iconType);
+
+		previousCoords = entry["coords"];
+	}
+
+	setTimeout(mapAnimateEnd, i*timeoutDelay);
+}
+
+
+async function mapAnimateStart() {
+	// Disable map and buttons
+	document.getElementById("map-container").classList.add("is-locked");
+	document.getElementById("mapAnimateBtn").disabled = true;
+	document.getElementById("mapAnimateBtn").textContent = "Animating...";
+
+	var parsedData = parse_data(JSON.parse(localStorage["kcuichi_journeyData"]));
+	animate_journey_on_map(parsedData);
+}
+
+
+function mapAnimateEnd() {
+	document.getElementById("map-container").classList.remove("is-locked");
+	document.getElementById("mapAnimateBtn").disabled = false;
+	document.getElementById("mapAnimateBtn").textContent = "Animate";
+}
+
+
+document.getElementById("mapAnimateBtn").onclick = mapAnimateStart;
 
 
 load_trail_path();
 fetch_journey_data();
+
+// const theButton = document.querySelector(".button");
+
+// theButton.addEventListener("click", () => {
+//     theButton.classList.add("button--loading");
+// });

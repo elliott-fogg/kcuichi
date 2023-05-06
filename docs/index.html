@@ -5,12 +5,6 @@
 	<title>Camilo Tracker</title>
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-	
- 	<link
-	    rel="preload"
-	    href="images/sindar_background.png"
-	    as="image"
-	    type="image/png"/>
 
 	<!-- Leaflet Css -->
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -44,7 +38,10 @@
 		</section>
 
 		<!-- Slippy Map, made with Leaflet.js and OpenStreetMap -->
-		<div id="map"></div>
+		<div id="map-container">
+			<div id="map"></div>
+		</div>
+		<button id="mapAnimateBtn" disabled>Animate</button>
 
 		<!-- A Scrollable Comment Secion -->
 		<section>
@@ -77,14 +74,6 @@
 
 	</div>
 </body>
-
-<script>
-	if ((window.innerHeight/1600) < (window.innerWidth/1200)) {
-
-	}
-	console.log(window.innerHeight);
-	console.log(window.innerWidth);
-</script>
 
 <script type="text/javascript" src="load_data.js"></script>
 <script type="text/javascript" src="load_comments.js"></script>
