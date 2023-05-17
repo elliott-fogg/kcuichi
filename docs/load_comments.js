@@ -156,7 +156,7 @@ function create_comment(commentName, commentTimestamp,
 	outer_div.classList.add("comment");
 	
 	let date = new Date(parseInt(commentTimestamp));
-	let timeText = date.toLocaleString("en-GB") + " (UK)";
+	let timeText = date.toLocaleString("en-GB");
 
 	var name_div = document.createElement("div");
 	var name_span = document.createElement("span");
